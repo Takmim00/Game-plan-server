@@ -10,10 +10,8 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://gamePlanDB:${process.env.DB_USER}@game-plan.j9o9zyz.mongodb.net/?retryWrites=true&w=majority&appName=game-plan`
+const uri = `mongodb+srv://gamePlanDB:${process.env.DB_PASS}@game-plan.j9o9zyz.mongodb.net/?retryWrites=true&w=majority&appName=game-plan`;
 console.log(uri);
-
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.fcial.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -27,9 +25,14 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const db = client.db("gamePlan");
-    
+
     const userCollection = db.collection("users");
-    
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    });
 
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
